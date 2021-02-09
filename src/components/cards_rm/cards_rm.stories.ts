@@ -1,13 +1,8 @@
 import "./cards_rm.css";
 import { createCard } from "./cards_rm";
 import { createElement } from "../utils/createElement";
- api
+
 import { getCharacter } from "../utils/api";
-
-import { getLineAndCharacterOfPosition } from "typescript";
-main
-
-
 
 export default {
   title: "Components/Card",
@@ -35,31 +30,24 @@ export const Multiple = () => {
       name: "Summer Smith",
       status: "Alive",
       species: "Human",
-      origin: { name: "Earth (C-137)" }
+      origin: { name: "Earth (C-137)" },
     },
   ];
-  // todo: display multiple characters based on `characters`. 
+  // todo: display multiple characters based on `characters`.
   // you can use `createElement` here to create a container.
-  // don't forget to return the container. 
+  // don't forget to return the container.
 
+  const container = createElement("div", {
+    className: "container",
+    childs: characters.map((character) => createCard(character)),
+  });
 
+  return container;
+};
 
-
-const container = createElement("div", {
-  className: "container",
-  childs: characters.map((character) => createCard(character)),
-});
-
-
-return container ;
-}
-
-
-  
- api
 export const CharacterFromAPI = (args, { loaded: { character } }) => {
   return createCard(character);
-}
+};
 
 CharacterFromAPI.loaders = [
   async () => ({
@@ -67,12 +55,16 @@ CharacterFromAPI.loaders = [
   }),
 ];
 
+export const CharacterFromAPI = (args, { loaded: { characters } }) => {
+  const container = createElement("div", {
+    className: "container",
+    childs: characters.map((character) => createCard(character)),
+  });
+  return container;
+};
 
-  
- main
-
-
-
-
-
-  
+CharactersFromAPI.loaders = [
+  async () => ({
+    characters: await getCharacters(),
+  }),
+];
