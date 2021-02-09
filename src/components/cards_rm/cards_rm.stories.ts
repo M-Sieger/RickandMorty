@@ -1,7 +1,11 @@
 import "./cards_rm.css";
 import { createCard } from "./cards_rm";
 import { createElement } from "../utils/createElement";
+ api
 import { getCharacter } from "../utils/api";
+
+import { getLineAndCharacterOfPosition } from "typescript";
+main
 
 
 
@@ -52,6 +56,7 @@ return container ;
 
 
   
+ api
 export const CharacterFromAPI = (args, { loaded: { character } }) => {
   return createCard(character);
 }
@@ -61,6 +66,10 @@ CharacterFromAPI.loaders = [
     character: await getCharacter(7),
   }),
 ];
+
+
+  
+ main
 
 
 
