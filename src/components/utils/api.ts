@@ -1,13 +1,3 @@
-export type APICharacters = {
-  info: {
-    count: number;
-    pages: number;
-    next: string;
-    prev: string | null;
-  };
-  results: APICharacter[];
-};
-
 export type APICharacter = {
   id: number;
   name: string;
@@ -29,31 +19,67 @@ export type APICharacter = {
   created: string;
 };
 
-export async function getCharacter(id: number) {
-  const response = await fetch(
-    `https://rickandmortyapi.com/api/character/${id}`
-  );
-  const result = (await response.json()) as APICharacter;
-  const character = {
-    imgSrc: result.image,
-    name: result.name,
-    status: result.status,
-    species: result.species,
-    origin: { name: result.origin.name },
+export type APICharacters = {
+  info: {
+    count: number;
+    pages: number;
+    next: string;
+    prev: string | null;
   };
-  return character;
-}
+  results: APICharacter[];
+};
 
-export async function getCharacters() {
-  const response = await fetch(`https://rickandmortyapi.com/api/character`);
-  const result = (await response.json()) as APICharacters;
-  const characters = result.results.map((apiCharacter) => ({
+export type Character = {
+  imgSrc: string;
+  name: string;
+  status: "Alive" | "Dead" | "unknown";
+  species: string;
+  origin: {
+    name: string;
+  };
+};
+
+function convertToCharacter(apiCharacter: APICharacter): Character {
+  return {
     imgSrc: apiCharacter.image,
     name: apiCharacter.name,
     status: apiCharacter.status,
     species: apiCharacter.species,
-    origin: { name: apiCharacter.origin.name },
-  }));
+    origin: apiCharacter.origin,
+  };
+}
 
+export async function getCharacter(id: number) {
+  const response = await fetch(
+    `https://rickandmortyapi.com/api/character/${id}`
+  );
+  if (!response.ok) {
+    const result = await response.json();
+    return {
+      imgSrc: "",
+      name: result.error,
+      status: "Dead",
+      species: "Human",
+      origin: {
+        name: "Internet",
+      },
+    };
+  }
+  const result = (await response.json()) as APICharacter;
+  const character = convertToCharacter(result);
+  return character;
+}
+
+export async function getCharacters(name?: string) {
+  const response = await fetch(
+    `https://rickandmortyapi.com/api/character/${name ? `?name=${name}` : ""}`
+  );
+  if (!response.ok) {
+    return [];
+  }
+  const result = (await response.json()) as APICharacters;
+  const characters = result.results.map((apiCharacter) =>
+    convertToCharacter(apiCharacter)
+  );
   return characters;
 }
